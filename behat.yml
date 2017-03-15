@@ -1,0 +1,7 @@
+default:
+  extensions:
+    Behat\MinkExtension:
+      base_url: https://www.ret.nl
+      browser_name: chrome
+      goutte: ~
+      selenium2: ~
