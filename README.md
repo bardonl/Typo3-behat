@@ -6,4 +6,4 @@
 * Then download the selenium driver from [here](http://www.seleniumhq.org/download/)
 * Execute start.sh 
 
-If run 'vendor/bin/behat' from the root folder it will start testing.
+If you now run 'vendor/bin/behat' from the root folder it will start testing.
