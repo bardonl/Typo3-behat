@@ -11,7 +11,7 @@ class FeatureContext extends MinkContext implements Context
     */
     public function suggestionBoxTimer($locator)  
     {
-        $this->getSession()->wait(5000, "$('". $locator ."').children().length > 0");
+		$this->getSession()->wait(5000, "$('". $locator ."').children().length > 0");
     }
 
 
@@ -44,6 +44,7 @@ class FeatureContext extends MinkContext implements Context
 
     /** This is needed because the RET site has some fancy ass animations, and because all the actions take place right after each other they will return an error if the animation/loading has not finished.
     *   @Then /^I wait for (\d+) seconds$/
+    *   @And /^I wait for (\d+) seconds$/
     **/
     public function timer($milisecs)    
     {
@@ -58,17 +59,26 @@ class FeatureContext extends MinkContext implements Context
         $screendir = getcwd() .'/screenshots';
         print("You can find the screenshot(s) in ". $screendir);
         if(!is_dir($screendir))    {
-            mkdir($screendir);
+			mkdir($screendir);
         }
         file_put_contents($screendir .'/'. date('d-m-y') .' - '. microtime(true) .'.png', $this->getSession()->getScreenshot());
     }
 
-    /**
-    *	@Then the following lines should be visible
+    /** 
+    *	@Given the following lines exist:
     **/
     public function seeTheLines(TableNode $linesTable)	{
-    	foreach ($lines as $line) {
-    		$this->getSession()->getPage()->find('xpath', '//text['. $line .']');
+    	//Possible feature: get the lines available from the site and randomly click on some.
+    	foreach ($linesTable->getHash() as $linesHash) {
+    		$lines[] = $linesHash;
+    	}
+    	for ($i=0; $i < count($lines); $i++) { 
+    		$stringIt = implode('', $lines[$i]);
+    		$element = $this->getSession()->getPage()->find('css', '.line-number--tram-'. $stringIt);
+
+    		if(null === $element)	{
+    			print(sprintf("Cannot find line %s", $stringIt));
+    		}
     	}
     }
 }
