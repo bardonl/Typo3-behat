@@ -7,9 +7,9 @@ use Behat\MinkExtension\Context\MinkContext;
 class FeatureContext extends MinkContext implements Context    
 {
     /**
-    *   @Then /^I wait for the suggestionbox with "([^"]*)" to appear$/
+    *   @Then /^I wait for the suggestion box with "([^"]*)" to appear$/
     */
-    public function WaitForTheSuggestionBoxToAppearOnPage($locator)  
+    public function suggestionBoxTimer($locator)  
     {
         $this->getSession()->wait(5000, "$('". $locator ."').children().length > 0");
     }
@@ -18,7 +18,7 @@ class FeatureContext extends MinkContext implements Context
     /** Clicks on an ID or Class.
     *   @When /^I click on the selector "([^"]*)"$/
     **/
-    public function ClickOnClassOrId($selector)	
+    public function clickOnClassOrId($selector)	
     {
     	$whatisit = substr($selector, 0, 1);
     	switch ($whatisit) {
@@ -30,7 +30,7 @@ class FeatureContext extends MinkContext implements Context
     			$element = $this->getSession()->getPage()->find('css', $selector);
     			break;
     		default:
-    			throw new \InvalidArgumentException("Cannot determine if it's an ID or class. Did you place an '.' or '#' in front of the selector?");
+    			throw new \InvalidArgumentException("Cannot determine if it's an ID or class. Did you place a '.' or '#' in front of the selector?");
     			break;
     	}
 
@@ -42,12 +42,10 @@ class FeatureContext extends MinkContext implements Context
     	}
     }
 
-    //get the thing it needs to click on, substr that and check if its an # or . and on that basis make it click an id
-
-    /** This is needed because the RET site has some fancy ass animations, and because all the actions take place right after eachother they will return an error if the animation/loading has not finished.
+    /** This is needed because the RET site has some fancy ass animations, and because all the actions take place right after each other they will return an error if the animation/loading has not finished.
     *   @Then /^I wait for (\d+) seconds$/
     **/
-    public function WaitAnAmount($milisecs)    
+    public function timer($milisecs)    
     {
         $this->getSession()->wait($milisecs * 1000);
     }
@@ -57,13 +55,20 @@ class FeatureContext extends MinkContext implements Context
     **/
     public function takeScreenshotOfPage()  
     {
-        $currentdir = getcwd();
-        $dirname = 'screenshots';
-                print("You can find the screenshots in ". $currentdir .'/'. $dirname);
-        if(!is_dir($currentdir .'/'. $dirname))    {
-            mkdir($currentdir .'/'. $dirname);
+        $screendir = getcwd() .'/screenshots';
+        print("You can find the screenshot(s) in ". $screendir);
+        if(!is_dir($screendir))    {
+            mkdir($screendir);
         }
-        $this->getSession()->maximizeWindow(); //Doesn't work properly on macOS.
-        file_put_contents($currentdir .'/'. $dirname .'/'. date('d-m-y') .' - '. microtime(true) .'.png', $this->getSession()->getScreenshot());
+        file_put_contents($screendir .'/'. date('d-m-y') .' - '. microtime(true) .'.png', $this->getSession()->getScreenshot());
+    }
+
+    /**
+    *	@Then the following lines should be visible
+    **/
+    public function seeTheLines(TableNode $linesTable)	{
+    	foreach ($lines as $line) {
+    		$this->getSession()->getPage()->find('xpath', '//text['. $line .']');
+    	}
     }
 }
