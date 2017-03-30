@@ -1,6 +1,6 @@
 Feature: English
   In order to use the website
-  As a english user
+  As an english user
   I need to be able to use and understand the website
 
   Background:
@@ -15,17 +15,17 @@ Feature: English
 
   Scenario: I want to see the lines and check them out
     Given the following lines exist:
-      | type   | lines  |
-      | Bus    |  37    |
-      | Bus    |  70    |
-      | Bus    |  174   |
-      | Bus    |  121   |
-      | Bus    |  713   |
-      | Tram   |  4     |
-      | Tram   |  23    |
-      | Tram   |  7     |
-      | Tram   |  25    |
-      | Tram   |  8     |
+      | type | lines |
+      | Bus  | 37    |
+      | Bus  | 70    |
+      | Bus  | 174   |
+      | Bus  | 121   |
+      | Bus  | 713   |
+      | Tram | 4     |
+      | Tram | 23    |
+      | Tram | 7     |
+      | Tram | 25    |
+      | Tram | 8     |
     Then I click on some random lines
 
   Scenario: I check out a bus line
