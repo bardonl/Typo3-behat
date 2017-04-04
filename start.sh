@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
 echo Starting servers...
-java -jar selenium-server-standalone-3.3.0.jar &
-./chromedriver
+phantomjs --ssl-protocol=any --ignore-ssl-errors=true $(pwd)/vendor/jcalderonzumba/gastonjs/src/Client/main.js 8510 1024 768 js_errors=false

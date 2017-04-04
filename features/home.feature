@@ -9,18 +9,15 @@ Feature: Homepage
     Then I should see "English version"
 
 
-  @noJS
   Scenario: Can I go to the homepage
     Then I should see "Dienstregeling"
 
-  @noJS
   Scenario: I want to visit the blog
     Then I should see "Blog"
     When I follow "Blog"
     Then the url should match "blog.html"
     Then I should see "De leukste verhalen uit en over het OV"
 
-  @noJS
   Scenario: Check out a tram line
     When I click on the selector ".line-number--tram-8"
     Then the url should match "tram-8"
@@ -29,48 +26,42 @@ Feature: Homepage
     Then the url should match "pieter-de-hoochweg"
     Then I should see "Halte"
 
-  @test
   Scenario: Can I see and click on some lines
     Given the following lines exist:
-    | type   | lines  |
-    | Bus    |  37    |
-    | Bus    |  70    |
-    | Bus    |  174   |
-    | Bus    |  121   |
-    | Bus    |  713   |
-    | Tram   |  4     |
-    | Tram   |  23    |
-    | Tram   |  7     |
-    | Tram   |  25    |
-    | Tram   |  8     |
-    | Bobbus |  b4    |
-    | Bobbus |  b2    |
-    | Bobbus |  b19   |
-    | Boat   | ferry  |
+      | type   | lines |
+      | Bus    | 37    |
+      | Bus    | 70    |
+      | Bus    | 174   |
+      | Bus    | 121   |
+      | Bus    | 713   |
+      | Tram   | 4     |
+      | Tram   | 23    |
+      | Tram   | 7     |
+      | Tram   | 25    |
+      | Tram   | 8     |
+      | Bobbus | b4    |
+      | Bobbus | b2    |
+      | Bobbus | b19   |
+      | Boat   | ferry |
     Then I click on some random lines
 
-  @noJS
-  Scenario: I want to see lines near me
-    When I click on the selector ".js-geolocation-toggle"
-    Then I should see "8" in the "line-overview__line--close" element
+#  Scenario: I want to see lines near me
+#    When I click on the selector ".js-geolocation-toggle"
+#    Then I should see "8" in the "line-overview__line--close" element
 
+  Scenario: Can I see and use the reisplanner
+      When I fill in "input--address-departure" with "Keizerswaard, Rotterdam"
+      When I fill in "input--address-arrival" with "Pieter de Hoochweg, Rotterdam"
+      When I press "Nu bekijken"
+      Then print current URL
+      Given I am on ""
+      Then I should see "Vertrek:"
+      Then the url should match "reizen/reisplanner/n-a/n-a/n-a/"
+      Given I am on ""
+      Then I should see "Vertrek:"
+      And I should see "Aankomst"
 
   @javascript
-  Scenario: Can I see and use the Reisplanner
-    Given I am on the homepage
-    When I click on the selector "#aria-panel-reisplanner"
-    Then I wait for 2 seconds
+  Scenario: Can I see and use the reisplanner
+    Then I should see "Dienstregeling"
     Then I take a screenshot
-    When I fill in "input--address-departure" with "Keizerswaard, Rotterdam"
-    Then I click on the selector "#input--address-departure"
-    Then I wait for 2 seconds
-    When I click on the selector "#aria-panel-reisplanner"
-    When I fill in "input--address-arrival" with "Pieter de Hoochweg, Rotterdam"
-    Then I click on the selector "#input--address-arrival"
-    And I wait for 2 seconds
-    When I click on the selector "#aria-panel-reisplanner"
-    Then I scroll "reisplanner__step" into view
-    And I wait for 3 seconds
-    When I press "Nu bekijken"
-    Then the url should match "reisplanner/details/"
-    Then I should see "VERTREK"

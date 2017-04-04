@@ -30,7 +30,7 @@ Feature: English
 
   Scenario: I check out a bus line
     When I click on the selector ".line-number--bus-51"
-    Then the url should match "dienstregeling/bus-51.html"
+    Then the url should match "bus-51.html"
     Then print current URL
     Then I should see "Bus 51"
     When I click on the selector ".HA3027"
