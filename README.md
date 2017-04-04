@@ -15,7 +15,11 @@ You can also run the tests without PhantomJS but the javascript tests will fail.
 ### Hacks needed ###
 This is for now a temporary hack until I can find out the actual source of the problem: 
 
+<<<<<<< HEAD
 Edit the file located in: `vendor/jcalderonzumba/gastonjs/src/Client/main.js` and remove `=== false` from the very last line.
 
 
 
+=======
+Edit the file located in: `vendor/jcalderonzumba/gastonjs/src/Client/main.js` and remove `=== false` from the very last line.
+>>>>>>> master
