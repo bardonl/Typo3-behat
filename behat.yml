@@ -1,10 +1,8 @@
 default:
   extensions:
     Behat\MinkExtension:
-      base_url: https://www.ret.nl
-      javascript_session: 'phantomjs'
-      browser_name: phantomjs
+      base_url: 'https://www.ret.nl/'
+      browser_name: chrome
       goutte: ~
-      phantomjs:
-        phantom_server: "http://localhost:8510/api"
-    Zumba\PhantomJSExtension:
+      selenium2:
+        wd_host: 'http://127.0.0.1:4444/wd/hub'
