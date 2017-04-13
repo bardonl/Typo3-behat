@@ -1,6 +1,6 @@
 Feature: English
   In order to use the website
-  As an english user
+  As an English user
   I need to be able to use and understand the website
 
   Background:

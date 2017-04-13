@@ -108,8 +108,8 @@ class FeatureContext extends MinkContext implements Context
      */
     public function clickOnRandomLines()
     {
-        if (!empty($this->typeAndLines))    {
-            for ($j = 0; $j <= count($this->typeAndLines); $j++)    {
+        if (!empty($this->typeAndLines))  {
+            for ($j = 0; $j <= count($this->typeAndLines); $j++)  {
                 $randomNumbers[] = mt_rand(1, count($this->typeAndLines));
             }
 
