@@ -5,3 +5,4 @@ chromedriver
 selenium-server-standalone-*.jar
 screenshots/
 .phpintel/
+.idea

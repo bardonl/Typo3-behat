@@ -1,37 +1,55 @@
 Feature: Homepage
-	In order to see the homepage
-	As a website user
-	I need to be able to see and interact with the homepage
+  In order to see the homepage
+  As a website guest
+  I need to be able to use the homepage
 
-	@noJS
-	Scenario: I want to see the blog
-		Given I am on the homepage
-		Then I should see "Blog"
-		When I follow "Blog"
-		Then the url should match "blog.html"
+  Background:
+    Given I am on the homepage
 
-	@javascript
-	Scenario: Can I see all bus lines
-		Given I am on the homepage
-		When I click on the class "expand"
-		Then I wait for 1 seconds
-		Then I should see "713"
-		Then I take a screenshot
+  Scenario: Can I go to the homepage
+    Then I should see "Dienstregeling"
 
-	@javascript
-	Scenario: Can I see the Reisplanner
-		Given I am on the homepage
-		When I click on the id 'aria-panel-reisplanner'
-		Then I wait for 2 seconds
-		Then I should see "Van waar vertrek je"
-		When I fill in "voer je halte of straatnaam in" with "Keizerswaard, Rotterdam"
-		Then I wait for the suggestion box to appear on reisplanner page
+  Scenario: I want to visit the blog
+    Then I should see "Blog"
+    When I follow "Blog"
+    Then the url should match "blog.html"
+    Then I should see "De leukste verhalen uit en over het OV"
 
-	@javascript
-	Scenario: I want to see lines near me
-		Given I am on the homepage
-		When I click on the id "aria-panel-dienstregeling"
-		When I click on the class "js-geolocation-toggle"
-		Then I wait for 3 seconds
-		Then I should see "8" in the "line-overview__line--close" element
-		Then I take a screenshot
+  Scenario: Check out a tram line
+    When I click on the selector ".line-number--tram-8"
+    Then the url should match "tram-8"
+    Then I should see "Tram 8"
+    When I click on the selector ".HA1169"
+    Then the url should match "pieter-de-hoochweg"
+    Then I should see "Halte"
+
+  Scenario: Can I see and click on some lines
+    Given the following lines exist:
+      | type   | lines |
+      | Bus    | 37    |
+      | Bus    | 70    |
+      | Bus    | 174   |
+      | Bus    | 121   |
+      | Bus    | 713   |
+      | Tram   | 4     |
+      | Tram   | 23    |
+      | Tram   | 7     |
+      | Tram   | 25    |
+      | Tram   | 8     |
+      | Bobbus | b4    |
+      | Bobbus | b2    |
+      | Bobbus | b19   |
+      | Boat   | ferry |
+    Then I click on some random lines
+
+  Scenario: I want to see lines near me
+    When I click on the selector ".js-geolocation-toggle"
+    Then I should see "8" in the "line-overview__line--close" element
+
+  @test
+  Scenario: Can I see and use the journey planner
+    Given the following journeys exist:
+      |     departure    |      arrival       |
+      | Beurs, Rotterdam |  Blaak, Rotterdam  |
+      | Metrostation Coolhaven, Rotterdam |  Metrostation Spijkenisse Centrum  |
+

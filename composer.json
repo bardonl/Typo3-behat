@@ -2,6 +2,11 @@
     "require": {
         "behat/mink-extension": "^2.2",
         "behat/mink-goutte-driver": "^1.2",
+        "hybridlogic/phantomjs": "^1.0",
         "behat/mink-selenium2-driver": "^1.3"
+    },
+    "require-dev": {
+        "behat/mink": "^1.7",
+        "jcalderonzumba/behat-phantomjs-extension": "^0.1.3"
     }
 }

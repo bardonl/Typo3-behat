@@ -1,22 +1,25 @@
 Feature: Search
-	In order to search
-	As a website user
-	I need to be able to enter text in the searchbox and search
+  In order to search
+  As a website guest
+  I need to be able to enter text in the searchbox and search
 
-	@javascript
-	Scenario: Searching for an item that does exist
-		Given I am on the homepage
-		When I fill in "Waar zoek je naar?" with "Tram 23"
-		When I click on the class "search__icon"
-		Then I wait for 3 seconds
-		Then the url should match "zoekresultaten.html"
-		Then I should see "Resultaten gevonden"
+  Background:
+    Given I am on the homepage
 
-	@javascript
-	Scenario: Searching for an item that does not exist
-		Given I am on the homepage
-		When I fill in "Waar zoek je naar?" with "hijmoetnuechtniksvidenanderswordikgek"
-		When I click on the class "search__icon"
-		Then I wait for 3 seconds
-		Then the url should match "zoekresultaten.html"
-		Then I should not see "Resultaten gevonden"
+  Scenario: Searching for a line that does exist
+    Then I search the RET site with "Tram 25"
+    Then print current URL
+    Then I should not see "We hebben geen resultaat kunnen vinden."
+    Then I should see "tram 25"
+    When I follow "Lees verder"
+    Then the url should match "tram-25"
+
+  Scenario: Searching for a line that does not exist
+    Then I search the RET site with "Tram 9000"
+    Then print current URL
+    Then I should not see "Resultaten gevonden"
+    Then I should see "We hebben geen resultaat kunnen vinden."
+
+  Scenario: I'm a hacker
+    Then I search the RET site with ""; huehue hacker"
+    Then print current URL
