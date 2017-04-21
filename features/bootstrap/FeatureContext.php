@@ -150,9 +150,6 @@ class FeatureContext extends MinkContext implements Context
      */
     public function journeyPlanner(TableNode $departureAndArrival)
     {
-        $departures = array();
-        $via = array();
-        $arrivals = array();
         $i = 0;
 
         foreach ($departureAndArrival->getHash() as $depAndArrHash) {
@@ -201,12 +198,8 @@ class FeatureContext extends MinkContext implements Context
      */
     public function reverseStringJourneyPlanner($string)
     {
-        //@TODO(?) Could also just do the word switch in streetnames_ret.txt then I would not need this function at all.
         if ($string !== 'n-a') {
-            $string = str_replace('/', '_', $string);
-            $firstWord = substr($string, 0, strpos($string, '_'));
-            $secondWord = substr($string, strpos($string, '_') + 1, strlen($string));
-            return $secondWord . '_' . $firstWord;
+            return implode('_', array_reverse(explode('/', $string)));
         }
     }
 }
