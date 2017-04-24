@@ -159,15 +159,15 @@ class FeatureContext extends MinkContext implements Context
             $i++;
         }
 
-        for ($j = 0; $j < count($departureAndArrival->getHash()); $j++) {
-            $this->fillHiddenField('tx_retjourneyplanner_form[search][departure][uid]', $departures[$j]);
-            $this->fillHiddenField('tx_retjourneyplanner_form[search][via][uid]', $via[$j]);
-            $this->fillHiddenField('tx_retjourneyplanner_form[search][arrival][uid]', $arrivals[$j]);
+        for ($journeyIndex = 0; $journeyIndex < count($departureAndArrival->getHash()); $journeyIndex++) {
+            $this->fillHiddenField('tx_retjourneyplanner_form[search][departure][uid]', $departures[$journeyIndex]);
+            $this->fillHiddenField('tx_retjourneyplanner_form[search][via][uid]', $via[$journeyIndex]);
+            $this->fillHiddenField('tx_retjourneyplanner_form[search][arrival][uid]', $arrivals[$journeyIndex]);
             $this->getSession()->getPage()->pressButton('Nu bekijken');
 
-            $depart = $this->reverseStringJourneyPlanner($departures[$j]);
-            $vias = $this->reverseStringJourneyPlanner($via[$j]);
-            $arrivs = $this->reverseStringJourneyPlanner($arrivals[$j]);
+            $depart = $this->reverseStringJourneyPlanner($departures[$journeyIndex]);
+            $vias = $this->reverseStringJourneyPlanner($via[$journeyIndex]);
+            $arrivs = $this->reverseStringJourneyPlanner($arrivals[$journeyIndex]);
 
             $this->assertUrlRegExp('/' . $depart . '/');
             $this->assertUrlRegExp('/' . $vias . '/');
