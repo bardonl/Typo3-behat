@@ -49,7 +49,9 @@ class FeatureContext extends MinkContext implements Context
                 $element = $this->getSession()->getPage()->find('css', $selector);
                 break;
             default:
-                throw new \InvalidArgumentException('Cannot determine if it\'s an ID or class. Did you place a "." or "#" in front of the selector?');
+                throw new \InvalidArgumentException(
+                    'Cannot determine if it\'s an ID or class. Did you place a "." or "#" in front of the selector?'
+                );
                 break;
         }
 
@@ -60,7 +62,7 @@ class FeatureContext extends MinkContext implements Context
         }
     }
 
-    /** This is needed because the RET site has some fancy ass animations, and because all the actions take place right
+    /** This is needed because the RET site has some fancy animations, and because all the actions take place right
      *  after each other they will return an error if the animation/loading has not finished.
      * @param int $seconds
      * @Then /^I wait for (\d+) seconds$/
@@ -134,11 +136,11 @@ class FeatureContext extends MinkContext implements Context
      */
     public function searchOnRET($searchCriteria)
     {
-        $base_url = "https://www.ret.nl/zoekresultaten.html?__referrer%5B%40extension%5D=&__referrer%5B%40controller%5D=Standard&__referrer%5B%40action%5D=index&__referrer%5Barguments%5D=YTowOnt9530c493ba004cf1caf123ffd1044ee4efb5d5375&__referrer%5B%40request%5D=a%3A3%3A%7Bs%3A10%3A%22%40extension%22%3BN%3Bs%3A11%3A%22%40controller%22%3Bs%3A8%3A%22Standard%22%3Bs%3A7%3A%22%40action%22%3Bs%3A5%3A%22index%22%3B%7D40d8b6f2582bb319cdc6822b8191d6122c5b0636&__trustedProperties=a%3A0%3A%7B%7D19ce2f840cb5d040168e337ca7768ade4283e5bb&q=";
+        $base_url = 'https://www.ret.nl/zoekresultaten.html?__referrer%5B%40extension%5D=&__referrer%5B%40controller%5D=Standard&__referrer%5B%40action%5D=index&__referrer%5Barguments%5D=YTowOnt9530c493ba004cf1caf123ffd1044ee4efb5d5375&__referrer%5B%40request%5D=a%3A3%3A%7Bs%3A10%3A%22%40extension%22%3BN%3Bs%3A11%3A%22%40controller%22%3Bs%3A8%3A%22Standard%22%3Bs%3A7%3A%22%40action%22%3Bs%3A5%3A%22index%22%3B%7D40d8b6f2582bb319cdc6822b8191d6122c5b0636&__trustedProperties=a%3A0%3A%7B%7D19ce2f840cb5d040168e337ca7768ade4283e5bb&q=';
         $spacesToPlus = str_replace(' ', '+', $searchCriteria);
         $this->visit($base_url . $spacesToPlus);
         if ($this->assertResponseStatus(200)) {
-            throw new \InvalidArgumentException(sprintf("Error: search page returned 404."));
+            throw new \InvalidArgumentException(sprintf('Error: search page returned 404.'));
         }
     }
 
@@ -148,22 +150,56 @@ class FeatureContext extends MinkContext implements Context
      */
     public function journeyPlanner(TableNode $departureAndArrival)
     {
-        //@TODO Make this work(has to be done with javascript)
         $i = 0;
-        $departures = null;
-        $arrivals = null;
+
         foreach ($departureAndArrival->getHash() as $depAndArrHash) {
             $departures[$i] = $depAndArrHash['departure'];
+            $via[$i] = $depAndArrHash['via'];
             $arrivals[$i] = $depAndArrHash['arrival'];
             $i++;
         }
-        $this->clickOnClassOrId('#aria-panel-reisplanner');
-        print("Clicked on link\n");
-        for ($i = 0; $i < count($departures); $i++) {
-            $this->fillField('tx_retjourneyplanner_form[search][departure][name]', $departures[$i]);
-            print('Filled field' . "\n");
-            $this->suggestionBoxTimer('#custom-form-select-options-departure', true);
-            print('Suggestionbox' . "\n");
+
+        for ($journeyIndex = 0; $journeyIndex < count($departureAndArrival->getHash()); $journeyIndex++) {
+            $this->fillHiddenField('tx_retjourneyplanner_form[search][departure][uid]', $departures[$journeyIndex]);
+            $this->fillHiddenField('tx_retjourneyplanner_form[search][via][uid]', $via[$journeyIndex]);
+            $this->fillHiddenField('tx_retjourneyplanner_form[search][arrival][uid]', $arrivals[$journeyIndex]);
+            $this->getSession()->getPage()->pressButton('Nu bekijken');
+
+            $depart = $this->reverseStringJourneyPlanner($departures[$journeyIndex]);
+            $vias = $this->reverseStringJourneyPlanner($via[$journeyIndex]);
+            $arrivs = $this->reverseStringJourneyPlanner($arrivals[$journeyIndex]);
+
+            $this->assertUrlRegExp('/' . $depart . '/');
+            $this->assertUrlRegExp('/' . $vias . '/');
+            $this->assertUrlRegExp('/' . $arrivs . '/');
+
+            $this->assertPageContainsText('Totale reistijd');
+
+            print('Resulting URL: ');
+            print($this->printCurrentUrl() . PHP_EOL);
+        }
+    }
+
+    /**
+     * This function is mostly needed for the journeyplanner tests
+     * @param $field string
+     * @param $value string
+     * @Then /^I fill the hidden field "([^']*)" with "([^']*)"$/
+     */
+    public function fillHiddenField($field, $value)
+    {
+        $this->getSession()->getPage()->find('css', 'input[name="' . $field . '"]')->setValue($value);
+    }
+
+    /**
+     * This function is mostly to keep the journeyplanner DRY.. And easier to read.
+     * @param $string string
+     * @return string
+     */
+    public function reverseStringJourneyPlanner($string)
+    {
+        if ($string !== 'n-a') {
+            return implode('_', array_reverse(explode('/', $string)));
         }
     }
 }
