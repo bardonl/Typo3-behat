@@ -9,6 +9,8 @@ use Behat\MinkExtension\Context\MinkContext;
  */
 class FeatureContext extends MinkContext implements Context
 {
+    use HelperContext;
+
     /**
      * The CSS selectors for types and lines from the RET site.
      * @var array
@@ -31,61 +33,6 @@ class FeatureContext extends MinkContext implements Context
                 print('Couldn\'t find the first child of locator: ' . $locator);
             }
         }
-    }
-
-    /** Clicks on an ID or Class.
-     * @param string $selector , the id or class name.
-     * @When /^I click on the selector "([^']*)"$/
-     **/
-    public function clickOnClassOrId($selector)
-    {
-        $selectorType = substr($selector, 0, 1);
-        switch ($selectorType) {
-            case '#':
-                $noHashtag = str_replace('#', '', $selector);
-                $element = $this->getSession()->getPage()->findById($noHashtag);
-                break;
-            case '.':
-                $element = $this->getSession()->getPage()->find('css', $selector);
-                break;
-            default:
-                throw new \InvalidArgumentException(
-                    'Cannot determine if it\'s an ID or class. Did you place a "." or "#" in front of the selector?'
-                );
-                break;
-        }
-
-        if ($element === null) {
-            throw new \InvalidArgumentException(sprintf('Cannot find class or id with %s', $selector));
-        } else {
-            $element->click();
-        }
-    }
-
-    /** This is needed because the RET site has some fancy animations, and because all the actions take place right
-     *  after each other they will return an error if the animation/loading has not finished.
-     * @param int $seconds
-     * @Then /^I wait for (\d+) seconds$/
-     * @And /^I wait for (\d+) seconds$/
-     **/
-    public function timer($seconds)
-    {
-        $this->getSession()->wait($seconds * 1000);
-    }
-
-    /**
-     * @Then I take a screenshot
-     **/
-    public function takeScreenshotOfPage()
-    {
-        $screenDir = getcwd() . '/screenshots/';
-        print('You can find the screenshot(s) in ' . $screenDir . "\n");
-
-        if (!is_dir($screenDir)) {
-            mkdir($screenDir);
-        }
-        file_put_contents($screenDir . date('d-m-y') . ' - ' . microtime(true) . '.png',
-            $this->getSession()->getScreenshot());
     }
 
     /** Checks if the following lines exist on the page.
@@ -123,7 +70,7 @@ class FeatureContext extends MinkContext implements Context
 
             for ($i = 0; $i < count($indexArrayKeysNumerically); $i++) {
                 $this->clickOnClassOrId($this->typeAndLines[$indexArrayKeysNumerically[$i]]);
-                print('URL response code: ' . $this->getSession()->getStatusCode() . ', URL of tested line: ' . $this->getSession()->getCurrentUrl() . "\n");
+                print('URL response code: ' . $this->getSession()->getStatusCode() . ', URL of tested line: ' . $this->getSession()->getCurrentUrl() . PHP_EOL);
             }
         } else {
             throw new \InvalidArgumentException('Type and Lines array is empty, did you run. Given the following lines exist: prior?');
@@ -160,9 +107,9 @@ class FeatureContext extends MinkContext implements Context
         }
 
         for ($journeyIndex = 0; $journeyIndex < count($departureAndArrival->getHash()); $journeyIndex++) {
-            $this->fillHiddenField('tx_retjourneyplanner_form[search][departure][uid]', $departures[$journeyIndex]);
-            $this->fillHiddenField('tx_retjourneyplanner_form[search][via][uid]', $via[$journeyIndex]);
-            $this->fillHiddenField('tx_retjourneyplanner_form[search][arrival][uid]', $arrivals[$journeyIndex]);
+            $this->fillHiddenInput('tx_retjourneyplanner_form[search][departure][uid]', $departures[$journeyIndex]);
+            $this->fillHiddenInput('tx_retjourneyplanner_form[search][via][uid]', $via[$journeyIndex]);
+            $this->fillHiddenInput('tx_retjourneyplanner_form[search][arrival][uid]', $arrivals[$journeyIndex]);
             $this->getSession()->getPage()->pressButton('Nu bekijken');
 
             $depart = $this->reverseStringJourneyPlanner($departures[$journeyIndex]);
@@ -181,25 +128,15 @@ class FeatureContext extends MinkContext implements Context
     }
 
     /**
-     * This function is mostly needed for the journeyplanner tests
-     * @param $field string
-     * @param $value string
-     * @Then /^I fill the hidden field "([^']*)" with "([^']*)"$/
+     * @param $username
+     * @param $password
+     * @Then /^I login to ret with "([^']*)" and "([^']*)"$/
      */
-    public function fillHiddenField($field, $value)
+    public function loginToRet($username, $password)
     {
-        $this->getSession()->getPage()->find('css', 'input[name="' . $field . '"]')->setValue($value);
+        $this->fillField('tx_retusers_login[username]', $username);
+        $this->fillField('tx_retusers_login[password]', $password);
+        $this->pressButton('Inloggen');
     }
 
-    /**
-     * This function is mostly to keep the journeyplanner DRY.. And easier to read.
-     * @param $string string
-     * @return string
-     */
-    public function reverseStringJourneyPlanner($string)
-    {
-        if ($string !== 'n-a') {
-            return implode('_', array_reverse(explode('/', $string)));
-        }
-    }
 }

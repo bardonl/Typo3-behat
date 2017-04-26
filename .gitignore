@@ -1,8 +1,6 @@
-# Add any directories, files, or patterns you don't want to be tracked by version control
-
-vendor/
 chromedriver
 selenium-server-standalone-*.jar
 screenshots/
 .phpintel/
 .idea
+streetnames_ret.txt
