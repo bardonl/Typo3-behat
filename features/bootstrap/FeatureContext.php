@@ -133,8 +133,8 @@ class FeatureContext extends MinkContext implements Context
      */
     public function loginToRet($username, $password)
     {
-        $this->fillField('tx_retusers_login[username]', $username);
-        $this->fillField('tx_retusers_login[password]', $password);
+        $this->fillFieldInArray(['tx_retusers_login[username]' => $username,
+                                 'tx_retusers_login[password]' => $password]);
         $this->pressButton('Inloggen');
     }
 }

@@ -91,4 +91,13 @@ trait HelperContext
     {
         print($this->getSession()->getPage()->find('css', 'input[name="' . $field . '"]')->getValue());
     }
+
+    /**
+     * @param array $fieldAndValue
+     */
+    public function fillFieldInArray(array $fieldAndValue)  {
+        foreach ($fieldAndValue as $key => $value)  {
+            $this->fillField($key, $value);
+        }
+    }
 }
