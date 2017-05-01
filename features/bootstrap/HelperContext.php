@@ -73,13 +73,13 @@ trait HelperContext
     }
 
     /**
-     * @param $string string
+     * @param string $stringSwitchPlaces
      * @return string
      */
-    public function reverseStringJourneyPlanner($string)
+    public function reverseStringJourneyPlanner($stringSwitchPlaces)
     {
-        if ($string !== 'n-a') {
-            return implode('_', array_reverse(explode('/', $string)));
+        if ($stringSwitchPlaces !== 'n-a') {
+            return implode('_', array_reverse(explode('/', $stringSwitchPlaces)));
         }
     }
 
