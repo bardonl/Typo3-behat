@@ -63,16 +63,6 @@ trait HelperContext
     }
 
     /**
-     * @param array $fieldAndValuesArray
-     * @Then /^I fill the hidden input "([^']*)" with "([^']*)"$/
-     */
-    public function fillHiddenInput(array $fieldAndValuesArray)    {
-        foreach ($fieldAndValuesArray as $key => $value)   {
-            $this->getSession()->getPage()->find('css', 'input[name="' . $key . '"]')->setValue($value);
-        }
-    }
-
-    /**
      * @param string $stringSwitchPlaces
      * @return string
      */
@@ -95,9 +85,20 @@ trait HelperContext
     /**
      * @param array $fieldAndValue
      */
-    public function fillFieldInArray(array $fieldAndValue)  {
-        foreach ($fieldAndValue as $key => $value)  {
-            $this->fillField($key, $value);
+    public function fillFieldsFromArray(array $fieldAndValue)
+    {
+        foreach ($fieldAndValue as $key => $value) {
+            $this->getSession()->getPage()->find('css', 'input[name="' . $key . '"]')->setValue($value);
         }
+    }
+
+    /**
+     * @param string $field
+     * @param string $value
+     * @Then /^I fill the hidden input "([^']*)" with "([^']*)"$/
+     */
+    public function fillHiddenInputFromFeatureFiles($field, $value)
+    {
+        $this->getSession()->getPage()->find('css', 'input[name="' . $field . '"]')->setValue($value);
     }
 }

@@ -106,9 +106,9 @@ class FeatureContext extends MinkContext implements Context
         }
 
         for ($journeyIndex = 0; $journeyIndex < count($departureAndArrival->getHash()); $journeyIndex++) {
-            $this->fillHiddenInput(['tx_retjourneyplanner_form[search][departure][uid]' => $departures[$journeyIndex],
-                                    'tx_retjourneyplanner_form[search][via][uid]' => $via[$journeyIndex],
-                                    'tx_retjourneyplanner_form[search][arrival][uid]' => $arrivals[$journeyIndex]]);
+            $this->fillFieldsFromArray(['tx_retjourneyplanner_form[search][departure][uid]' => $departures[$journeyIndex],
+                                        'tx_retjourneyplanner_form[search][via][uid]' => $via[$journeyIndex],
+                                        'tx_retjourneyplanner_form[search][arrival][uid]' => $arrivals[$journeyIndex]]);
             $this->getSession()->getPage()->pressButton('Nu bekijken');
 
             $depart = $this->reverseStringJourneyPlanner($departures[$journeyIndex]);
@@ -133,8 +133,8 @@ class FeatureContext extends MinkContext implements Context
      */
     public function loginToRet($username, $password)
     {
-        $this->fillFieldInArray(['tx_retusers_login[username]' => $username,
-                                 'tx_retusers_login[password]' => $password]);
+        $this->fillFieldsFromArray(['tx_retusers_login[username]' => $username,
+                                    'tx_retusers_login[password]' => $password]);
         $this->pressButton('Inloggen');
     }
 }
