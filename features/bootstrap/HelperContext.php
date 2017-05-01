@@ -1,4 +1,5 @@
 <?php
+use Behat\Gherkin\Node\TableNode;
 
 /**
  * Class HelperContext this is for all the 'supportive' functions to keep FeatureContext neat and tidy.
@@ -62,14 +63,13 @@ trait HelperContext
     }
 
     /**
-     * This function is mostly needed for the journeyplanner tests
-     * @param $field string
-     * @param $value string
+     * @param array $fieldAndValuesArray
      * @Then /^I fill the hidden input "([^']*)" with "([^']*)"$/
      */
-    public function fillHiddenInput($field, $value)
-    {
-        $this->getSession()->getPage()->find('css', 'input[name="' . $field . '"]')->setValue($value);
+    public function fillHiddenInput(array $fieldAndValuesArray)    {
+        foreach ($fieldAndValuesArray as $key => $value)   {
+            $this->getSession()->getPage()->find('css', 'input[name="' . $key . '"]')->setValue($value);
+        }
     }
 
     /**
@@ -84,8 +84,8 @@ trait HelperContext
     }
 
     /**
+     * @param string $field
      * @Then /^I get the value of "([^']*)"$/
-     * @If "([^']*)"
      */
     public function getInputValue($field)
     {

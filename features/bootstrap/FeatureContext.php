@@ -78,7 +78,7 @@ class FeatureContext extends MinkContext implements Context
     }
 
     /** This searches on the RET site, this is needed because otherwise it returns an error.
-     * @param $searchCriteria string, the criteria to search for.
+     * @param string $searchCriteria
      * @Then /^I search the RET site with "([^']*)"$/
      */
     public function searchOnRET($searchCriteria)
@@ -92,13 +92,12 @@ class FeatureContext extends MinkContext implements Context
     }
 
     /**
-     * @param TableNode $departureAndArrival .
+     * @param TableNode $departureAndArrival
      * @Given the following journeys exist:
      */
     public function journeyPlanner(TableNode $departureAndArrival)
     {
         $i = 0;
-
         foreach ($departureAndArrival->getHash() as $depAndArrHash) {
             $departures[$i] = $depAndArrHash['departure'];
             $via[$i] = $depAndArrHash['via'];
@@ -107,9 +106,9 @@ class FeatureContext extends MinkContext implements Context
         }
 
         for ($journeyIndex = 0; $journeyIndex < count($departureAndArrival->getHash()); $journeyIndex++) {
-            $this->fillHiddenInput('tx_retjourneyplanner_form[search][departure][uid]', $departures[$journeyIndex]);
-            $this->fillHiddenInput('tx_retjourneyplanner_form[search][via][uid]', $via[$journeyIndex]);
-            $this->fillHiddenInput('tx_retjourneyplanner_form[search][arrival][uid]', $arrivals[$journeyIndex]);
+            $this->fillHiddenInput(['tx_retjourneyplanner_form[search][departure][uid]' => $departures[$journeyIndex],
+                                    'tx_retjourneyplanner_form[search][via][uid]' => $via[$journeyIndex],
+                                    'tx_retjourneyplanner_form[search][arrival][uid]' => $arrivals[$journeyIndex]]);
             $this->getSession()->getPage()->pressButton('Nu bekijken');
 
             $depart = $this->reverseStringJourneyPlanner($departures[$journeyIndex]);
@@ -128,8 +127,8 @@ class FeatureContext extends MinkContext implements Context
     }
 
     /**
-     * @param $username
-     * @param $password
+     * @param string $username
+     * @param string $password
      * @Then /^I login to ret with "([^']*)" and "([^']*)"$/
      */
     public function loginToRet($username, $password)
@@ -138,5 +137,4 @@ class FeatureContext extends MinkContext implements Context
         $this->fillField('tx_retusers_login[password]', $password);
         $this->pressButton('Inloggen');
     }
-
 }
