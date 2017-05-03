@@ -42,14 +42,40 @@ Feature: Homepage
       | Boat   | ferry |
     Then I click on some random lines
 
-  Scenario: I want to see lines near me
-    When I click on the selector ".js-geolocation-toggle"
-    Then I should see "8" in the "line-overview__line--close" element
+  Scenario: Can I use the journey planner
+    Given the following journeys exist:
+      |     departure    |      via       |     arrival   |
+      | rotterdam/spankerstraat |  s-gravendeel/biekurf |  rotterdam/pieter-de-hoochweg  |
+      | rotterdam/spankerstraat |  n-a |  rotterdam/pieter-de-hoochweg  |
+      | rotterdam/spankerstraat |  heenvliet/leenmanstraat|  rotterdam/pieter-de-hoochweg  |
+      | rotterdam/spankerstraat |  n-a |  rotterdam/pieter-de-hoochweg  |
+      | rotterdam/spankerstraat |  heinenoord/jan-van-vlietstraat |  rotterdam/pieter-de-hoochweg  |
 
   @test
-  Scenario: Can I see and use the journey planner
-    Given the following journeys exist:
-      |     departure    |      arrival       |
-      | Beurs, Rotterdam |  Blaak, Rotterdam  |
-      | Metrostation Coolhaven, Rotterdam |  Metrostation Spijkenisse Centrum  |
+  Scenario: Can I use the travel product assistent
+    Then I follow "Reisproductadviseur"
+    Then print current URL
+    Then I should see "Advies over het reisproduct dat het beste bij jou past"
+    Then print current URL
+    Then I press "Reisproductadviseur starten"
+    Then print current URL
+    Then I should see "Vul de vertrek- en aankomstlocatie"
+    Then I follow "Regelmatig"
+    Then print current URL
+    Then I should see "Wat voor type reiziger ben jij?"
+    Then I fill the hidden input "tx_retproducts_advisor[adviceRequest][departure][uid]" with "rotterdam/keizerswaard"
+    Then I fill the hidden input "tx_retproducts_advisor[adviceRequest][arrival][uid]" with "rotterdam/pieter-de-hoochweg"
+    Then I get the value of "tx_retproducts_advisor[adviceRequest][arrival][uid]"
+    When I check "Tram" from "tx_retproducts_advisor[adviceRequest][modalities][]"
+    Then I fill in "travels" with "20"
+    Then I fill in "additionalCosts" with "0"
+    Then I select "4" from "tx_retproducts_advisor[adviceRequest][age][__identity]"
+    Then I press "Volgende stap"
+    Then print current URL
+    Then print last response
+    Then I should see "Je advies"
 
+  @test
+  Scenario: I go to a page that doesn't exist
+    Given I am on "bestaatniet.html"
+    Then I should see "404"

@@ -15,11 +15,12 @@ Feature: Search
     Then the url should match "tram-25"
 
   Scenario: Searching for a line that does not exist
-    Then I search the RET site with "Tram 9000"
+    Then I search the RET site with "hijvindnuniks"
     Then print current URL
     Then I should not see "Resultaten gevonden"
     Then I should see "We hebben geen resultaat kunnen vinden."
 
   Scenario: I'm a hacker
-    Then I search the RET site with ""; huehue hacker"
+    Then I search the RET site with ""; SHOW TABLES"
+    Then I should see "Zoekresultaten"
     Then print current URL
