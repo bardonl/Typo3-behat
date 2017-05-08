@@ -13,21 +13,26 @@ Feature: Homepage
   @javascript
   Scenario: Can I see the menu
     Then I should see "MENU"
-    Then I click on the selector ".navigation__menu__text"
+    Then I click on the class ".navigation__menu__text"
     Then I wait for 5 seconds
     Then I should see "Klantenservice"
 
   @javascript
   Scenario: Can I expand the bus lines
-    Then I click on the selector ".expand"
+    Then I click on the class ".expand"
     Then I wait for 2 seconds
     Then I should see "713"
 
-  @javascript @test
-  Scenario: I should be able to see and dismiss the cookie bar and not see it when I re-visit the site.
-    Then I click on the selector ".cookie-bar__close"
-    Then I reload the page
-    Then I wait for 2 seconds
-    Then I take a screenshot
-    Then I should not see "RET.nl maakt gebruik van cookies,"
-    
+ @javascript
+  Scenario: Can I use the GPS functionality
+    Then I click on the class ".js-geolocation-toggle"
+    Then I wait for 5 seconds
+    Given the following lines exist:
+    Then I test if line 8 of type "tram" is near me
+
+   @javascript
+   Scenario: I add a line to my favourites
+     Given the following lines exist:
+       | type   | lines |
+       | Bus    | 37    |
+     Then I add the line to my favourites

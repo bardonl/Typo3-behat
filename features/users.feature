@@ -13,12 +13,10 @@ Feature: Users
 
   Scenario: I want to logout
     Then I login to ret with "kiwiMitchel" and "kaaskaas"
-    Then print current URL
     When I follow "Uitloggen"
     Then print current URL
     And I should see "Inloggen"
 
-  @test
   Scenario: I want to do SQL injections
     Then print current URL
     When I fill in "tx_retusers_login[username]" with "\"; SHOW TABLES;"

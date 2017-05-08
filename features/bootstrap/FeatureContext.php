@@ -12,14 +12,14 @@ class FeatureContext extends MinkContext implements Context
     use HelperContext;
 
     /**
-     * The CSS selectors for types and lines from the RET site.
+     * The CSS selectors for types and lines from the RET site. Used by the "seeTheLines" function
      * @var array
      */
     public $typeAndLines;
 
-    /**
-     * @param string $locator , the CSS class for locating the box that contains the suggestions
-     * @param boolean $clickOnFirstSuggestion , if you want to click on the first suggestion of the box.
+    /** Waits for a suggestionbox to appear under a input field.
+     * @param string $locator
+     * @param boolean $clickOnFirstSuggestion
      * @Then /^I wait for the suggestion box with "([^']*)" to appear$/
      **/
     public function suggestionBoxTimer($locator, $clickOnFirstSuggestion = false)
@@ -35,8 +35,12 @@ class FeatureContext extends MinkContext implements Context
         }
     }
 
-    /** Checks if the following lines exist on the page.
-     * @param TableNode $linesTable , Contains all the lines given in home.feature.
+    /** Checks if we can see lines in the dienstregelingen
+     * Example: Given the following lines exist:
+     *          | type | lines |
+     *          | Tram |  23   |
+     *          | bus  |  713  |
+     * @param TableNode $linesTable
      * @Given the following lines exist:
      **/
     public function seeTheLines(TableNode $linesTable)
@@ -55,7 +59,7 @@ class FeatureContext extends MinkContext implements Context
         }
     }
 
-    /** Clicks on the lines links and gives back the URL(for now)
+    /** Gets the lines from the typeAndLines array, clicks and tests them for a response.
      * @Then I click on some random lines
      */
     public function clickOnRandomLines()
@@ -77,7 +81,51 @@ class FeatureContext extends MinkContext implements Context
         }
     }
 
-    /** This searches on the RET site, this is needed because otherwise it returns an error.
+    /** This gets a random line (only one since thats the max ret supports for now) from the typeAndLines array and then adds it to the favourites.
+     * @Then I add the line to my favourites
+     */
+    public function addToFavourites()
+    {
+        if (!empty($this->typeAndLines)) {
+            $randomLine = $this->typeAndLines[mt_rand(1, count($this->typeAndLines))];
+
+            $this->clickOnClassOrId($randomLine);
+            $this->clickOnClassOrId('.btn--favorite');
+            $this->visit('/');
+            $this->assertPageContainsText('Favoriete lijnen');
+        } else {
+            throw new InvalidArgumentException('Type and Lines array is empty. Did you run Given the following lines exist, prior?');
+        }
+    }
+
+    /**
+     * @Then /^I test if line (\d+) of type "([^']*)" near me$/
+     */
+    function linesNearMe($lineNumber, $lineType)
+    {
+        //represent nth child of parent div in the dienstregeling id.
+        $nthChildType = [
+            'bus' => 1,
+            'tram' => 2,
+            'metro' => 3,
+            'ferry' => 4,
+            'bobbus' => 5,
+        ];
+
+        foreach ($nthChildType as $key => $value) {
+            if ($lineType === $key) {
+                $xPathLocator = '//*[@id="panel-dienstregeling"]/div/div[2]/div[' . $value . ']/div[4]/div[1]';
+                print($xPathLocator);
+            }
+        }
+        if ($this->getSession()->getPage()->find('xpath', $xPathLocator)->getText() === $lineNumber) {
+            print("Line number found!");
+        } else {
+            throw new Exception("Line was not found..");
+        }
+    }
+
+    /** Searches for a string on the RET site.
      * @param string $searchCriteria
      * @Then /^I search the RET site with "([^']*)"$/
      */
@@ -91,7 +139,7 @@ class FeatureContext extends MinkContext implements Context
         }
     }
 
-    /**
+    /** This tests the journeyplanner form on the homepage of RET.
      * @param TableNode $departureAndArrival
      * @Given the following journeys exist:
      */
@@ -106,9 +154,16 @@ class FeatureContext extends MinkContext implements Context
         }
 
         for ($journeyIndex = 0; $journeyIndex < count($departureAndArrival->getHash()); $journeyIndex++) {
-            $this->fillFieldsFromArray(['tx_retjourneyplanner_form[search][departure][uid]' => $departures[$journeyIndex],
-                                        'tx_retjourneyplanner_form[search][via][uid]' => $via[$journeyIndex],
-                                        'tx_retjourneyplanner_form[search][arrival][uid]' => $arrivals[$journeyIndex]]);
+            $this->fillFieldsFromArray([
+                'tx_retjourneyplanner_form[search][departure][uid]' => $departures[$journeyIndex],
+                'tx_retjourneyplanner_form[search][via][uid]' => $via[$journeyIndex],
+                'tx_retjourneyplanner_form[search][arrival][uid]' => $arrivals[$journeyIndex],
+                'tx_retjourneyplanner_form[search][requestType]' => mt_rand(0, 1),
+                'tx_retjourneyplanner_form[search][date]' => date('y-m-d'),
+                'tx_retjourneyplanner_form[search][time]' => date('H:m'),
+                'tx_retjourneyplanner_form[search][travelOption]' => mt_rand(1, 3),
+            ]);
+
             $this->getSession()->getPage()->pressButton('Nu bekijken');
 
             $depart = $this->reverseStringJourneyPlanner($departures[$journeyIndex]);
@@ -126,15 +181,18 @@ class FeatureContext extends MinkContext implements Context
         }
     }
 
-    /**
+    /** Goes to the login page and logs in to the RET site.
      * @param string $username
      * @param string $password
      * @Then /^I login to ret with "([^']*)" and "([^']*)"$/
      */
     public function loginToRet($username, $password)
     {
-        $this->fillFieldsFromArray(['tx_retusers_login[username]' => $username,
-                                    'tx_retusers_login[password]' => $password]);
+        $this->visit('https://www.ret.nl/home/mijn-ret/');
+        $this->fillFieldsFromArray([
+            'tx_retusers_login[username]' => $username,
+            'tx_retusers_login[password]' => $password
+        ]);
         $this->pressButton('Inloggen');
     }
 }
