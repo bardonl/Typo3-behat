@@ -72,9 +72,15 @@ class FeatureContext extends MinkContext implements Context
             $uniqueRandomNumbers = array_unique($randomNumbers);
             $indexArrayKeysNumerically = array_values($uniqueRandomNumbers);
 
-            for ($i = 0; $i < count($indexArrayKeysNumerically); $i++) {
+            for ($i = 1; $i < count($indexArrayKeysNumerically); $i++) {
                 $this->clickOnClassOrId($this->typeAndLines[$indexArrayKeysNumerically[$i]]);
                 print('URL response code: ' . $this->getSession()->getStatusCode() . ', URL of tested line: ' . $this->getSession()->getCurrentUrl() . PHP_EOL);
+
+                if (strpos($this->typeAndLines[$i], 'bobbus')) {
+
+                    $this->clickOnClassOrId('.tooltip--ellipsis');
+                    print('URL response code: ' . $this->getSession()->getStatusCode() . ', URL of tested line: ' . $this->getSession()->getCurrentUrl() . PHP_EOL);
+                }
             }
         } else {
             throw new \InvalidArgumentException('Type and Lines array is empty, did you run. Given the following lines exist: prior?');
