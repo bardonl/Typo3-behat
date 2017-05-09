@@ -17,7 +17,7 @@ class FeatureContext extends MinkContext implements Context
      */
     public $typeAndLines;
 
-    /** Waits for a suggestionbox to appear under a input field.
+    /** Waits for a suggestionbox to appear under an input field.
      * @param string $locator
      * @param boolean $clickOnFirstSuggestion
      * @Then /^I wait for the suggestion box with "([^']*)" to appear$/
@@ -82,6 +82,7 @@ class FeatureContext extends MinkContext implements Context
     }
 
     /** This gets a random line (only one since thats the max ret supports for now) from the typeAndLines array and then adds it to the favourites.
+     * @throws InvalidArgumentException
      * @Then I add the line to my favourites
      */
     public function addToFavourites()
@@ -99,9 +100,12 @@ class FeatureContext extends MinkContext implements Context
     }
 
     /**
-     * @Then /^I test if line (\d+) of type "([^']*)" near me$/
+     * @param string $lineType
+     * @param string $lineNumber
+     * @throws Exception
+     * @Then /^I test if line (\d+) of type "([^']*)" is near me$/
      */
-    function linesNearMe($lineNumber, $lineType)
+    public function linesNearMe($lineNumber, $lineType)
     {
         //represent nth child of parent div in the dienstregeling id.
         $nthChildType = [
