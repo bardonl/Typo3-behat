@@ -65,7 +65,7 @@ class FeatureContext extends MinkContext implements Context
     public function clickOnRandomLines()
     {
         if (!empty($this->typeAndLines)) {
-            for ($j = 0; $j <= count($this->typeAndLines); $j++) {
+            for ($j = 1; $j <= count($this->typeAndLines); $j++) {
                 $randomNumbers[] = mt_rand(1, count($this->typeAndLines));
             }
 
@@ -76,8 +76,8 @@ class FeatureContext extends MinkContext implements Context
                 $this->clickOnClassOrId($this->typeAndLines[$indexArrayKeysNumerically[$i]]);
                 print('URL response code: ' . $this->getSession()->getStatusCode() . ', URL of tested line: ' . $this->getSession()->getCurrentUrl() . PHP_EOL);
 
-                if (strpos($this->typeAndLines[$i], 'bobbus')) {
-
+                if (!strpos($this->typeAndLines[$i], 'bobbus')) {
+                    
                     $this->clickOnClassOrId('.tooltip--ellipsis');
                     print('URL response code: ' . $this->getSession()->getStatusCode() . ', URL of tested line: ' . $this->getSession()->getCurrentUrl() . PHP_EOL);
                 }
