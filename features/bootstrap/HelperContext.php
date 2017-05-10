@@ -9,7 +9,7 @@ trait HelperContext
 {
     /** Clicks on an ID or Class.
      * @param string $selector , the id or class name.
-     * @When /^I click on the selector "([^']*)"$/
+     * @When /^I click on the (?:class|id) "([^']*)"$/
      **/
     public function clickOnClassOrId($selector)
     {
@@ -36,7 +36,7 @@ trait HelperContext
         }
     }
 
-    /**
+    /** Takes a screenshot of the viewport, only works with the selenium2 driver(@javascript)
      * @Then I take a screenshot
      **/
     public function takeScreenshotOfPage()
@@ -51,8 +51,8 @@ trait HelperContext
             $this->getSession()->getScreenshot());
     }
 
-    /** This is needed because the RET site has some fancy animations, and because all the actions take place right
-     *  after each other they will return an error if the animation/loading has not finished.
+    /** Waits an x amount of seconds, only really useful for the selenium2 driver.
+     * Example: Then I wait for "<seconds>" seconds
      * @param int $seconds
      * @Then /^I wait for (\d+) seconds$/
      * @And /^I wait for (\d+) seconds$/
@@ -62,7 +62,7 @@ trait HelperContext
         $this->getSession()->wait($seconds * 1000);
     }
 
-    /**
+    /** Reverses strings like: test_rotterdam to rotterdam_test, this is because RET needs that in its UID.
      * @param string $stringSwitchPlaces
      * @return string
      */
@@ -73,7 +73,8 @@ trait HelperContext
         }
     }
 
-    /**
+    /** Gets the value of an input field
+     * Example: Then I get the value of "<field name>"
      * @param string $field
      * @Then /^I get the value of "([^']*)"$/
      */
@@ -82,7 +83,7 @@ trait HelperContext
         print($this->getSession()->getPage()->find('css', 'input[name="' . $field . '"]')->getValue());
     }
 
-    /**
+    /** Fills fields from an array input.
      * @param array $fieldAndValue
      */
     public function fillFieldsFromArray(array $fieldAndValue)
@@ -92,7 +93,8 @@ trait HelperContext
         }
     }
 
-    /**
+    /** Fills the hidden input that come from the feature files
+     * Example: Then I fill the hidden input "<field name>" with "<value to set>"
      * @param string $field
      * @param string $value
      * @Then /^I fill the hidden input "([^']*)" with "([^']*)"$/
