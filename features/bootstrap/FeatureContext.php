@@ -45,8 +45,10 @@ class FeatureContext extends MinkContext implements Context
      **/
     public function seeTheLines(TableNode $linesTable)
     {
+
         $i = 0;
         foreach ($linesTable->getHash() as $linesHash) {
+
             $i++;
             $this->typeAndLines[$i] = '.line-number--' . strtolower($linesHash['type']) . '-' . $linesHash['lines'];
         }
@@ -57,6 +59,7 @@ class FeatureContext extends MinkContext implements Context
             throw new \InvalidArgumentException(sprintf('Cannot find line %s of type %s', $linesHash['lines'],
                 $linesHash['type']));
         }
+
     }
 
     /** Gets the lines from the typeAndLines array, clicks and tests them for a response.
@@ -65,22 +68,13 @@ class FeatureContext extends MinkContext implements Context
     public function clickOnRandomLines()
     {
         if (!empty($this->typeAndLines)) {
-            for ($j = 1; $j <= count($this->typeAndLines); $j++) {
-                $randomNumbers[] = mt_rand(1, count($this->typeAndLines));
-            }
 
-            $uniqueRandomNumbers = array_unique($randomNumbers);
-            $indexArrayKeysNumerically = array_values($uniqueRandomNumbers);
+            $indexArray = $this->getIndexes();
 
-            for ($i = 1; $i < count($indexArrayKeysNumerically); $i++) {
-                $this->clickOnClassOrId($this->typeAndLines[$indexArrayKeysNumerically[$i]]);
-                print('URL response code: ' . $this->getSession()->getStatusCode() . ', URL of tested line: ' . $this->getSession()->getCurrentUrl() . PHP_EOL);
+            for ($i = 1; $i < count($indexArray); $i++) {
+                $this->clickOnClassOrId($this->typeAndLines[$indexArray[$i]]);
 
-                if (!strpos($this->typeAndLines[$i], 'bobbus')) {
-                    
-                    $this->clickOnClassOrId('.tooltip--ellipsis');
-                    print('URL response code: ' . $this->getSession()->getStatusCode() . ', URL of tested line: ' . $this->getSession()->getCurrentUrl() . PHP_EOL);
-                }
+                $this->visit('/');
             }
         } else {
             throw new \InvalidArgumentException('Type and Lines array is empty, did you run. Given the following lines exist: prior?');
@@ -201,4 +195,102 @@ class FeatureContext extends MinkContext implements Context
         ]);
         $this->pressButton('Inloggen');
     }
+
+    /**
+     * @param string $time
+     * @Then /^I check time of lines with time "([^']*)"$/
+     */
+    public function checkTime($time)
+    {
+        $this->timer(1);
+
+        $this->closeCookieBar();
+
+        $indexArray = $this->getIndexes();
+
+        for ($i = 1; $i < count($indexArray); $i++) {
+
+            $linesClasses = $this->typeAndLines[$indexArray[$i]];
+
+            $this->clickOnClassOrId($linesClasses);
+
+            if (!strstr($linesClasses, '-bobbus-')) {
+
+                $this->clickOnClassOrId('.tooltip--ellipsis');
+                $roundTrip = 'terug.html';
+
+            } else {
+                $roundTrip = 'heen.html';
+            }
+
+            $line = $this->getLines($linesClasses);
+
+            if ( is_array($line) && array_key_exists('error' , $line) && $line['error'] === 1) {
+                print($line['message'] . PHP_EOL);
+            } else {
+                $this->visit('/home/reizen/dienstregeling/' . $line . '/' . date('Y-m-d') . 'T' . $time . '%2B02%3A00/' . $roundTrip);
+                print($line . PHP_EOL);
+                print('/home/reizen/dienstregeling/' . $line . '/' . date('Y-m-d') . 'T' . $time . '%2B02%3A00/' . $roundTrip . PHP_EOL);
+            }
+
+            $this->timer(1);
+
+            $this->visit('/');
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getIndexes(){
+
+        for ($j = 1; $j <= count($this->typeAndLines); $j++) {
+            $randomNumbers[] = mt_rand(1, count($this->typeAndLines));
+        }
+
+        return array_values(array_unique($randomNumbers));
+    }
+
+    /**
+     * @param string $linesClass
+     * @return array|string
+     */
+    public function getLines($linesClass)
+    {
+
+        switch ($linesClass) {
+            case strstr($linesClass, '-boat-ferry') === '-boat-ferry':
+
+                return 'fast-ferry';
+
+            case strstr($linesClass, '-bobbus-') === '-bobbus-' . substr(strrchr($linesClass, '-'), 1):
+
+                return 'bob-bus-' . substr(strrchr($linesClass, '-'), 1);
+
+            case strstr($linesClass, '-bus-') === '-bus-' . substr(strrchr($linesClass, '-'), 1):
+
+                return substr(strstr($linesClass, '-bus-'), 1);
+
+            case strstr($linesClass, '-tram-') === '-tram-' . substr(strrchr($linesClass, '-'), 1):
+
+                return substr(strstr($linesClass, '-tram-'), 1);
+
+            default:
+
+                return [
+                    'message' => 'No line selected!',
+                    'error' => 1
+                ];
+
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function closeCookieBar()
+    {
+        $this->clickOnClassOrId('.cookie-bar__close');
+    }
+
 }
