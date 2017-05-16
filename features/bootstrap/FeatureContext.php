@@ -208,7 +208,7 @@ class FeatureContext extends MinkContext implements Context
 
         $indexArray = $this->getIndexes();
 
-        for ($i = 1; $i < count($indexArray); $i++) {
+        for ($i = 0; $i < count($indexArray); $i++) {
 
             $linesClasses = $this->typeAndLines[$indexArray[$i]];
 
