@@ -71,7 +71,7 @@ class FeatureContext extends MinkContext implements Context
 
             $indexArray = $this->getIndexes();
 
-            for ($i = 1; $i < count($indexArray); $i++) {
+            for ($i = 0; $i < count($indexArray); $i++) {
                 $this->clickOnClassOrId($this->typeAndLines[$indexArray[$i]]);
 
                 $this->visit('/');
@@ -244,7 +244,7 @@ class FeatureContext extends MinkContext implements Context
      */
     public function getIndexes(){
 
-        for ($j = 1; $j <= count($this->typeAndLines); $j++) {
+        for ($j = 0; $j <= count($this->typeAndLines); $j++) {
             $randomNumbers[] = mt_rand(1, count($this->typeAndLines));
         }
 
