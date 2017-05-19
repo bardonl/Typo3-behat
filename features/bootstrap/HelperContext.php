@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Trait HelperContext this is for all the 'supportive' functions to keep FeatureContext neat and tidy.
+ * Class HelperContext this is for all the 'supportive' functions to keep FeatureContext neat and tidy.
  * @package HelperContext
  */
 trait HelperContext

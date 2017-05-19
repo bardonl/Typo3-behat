@@ -2,7 +2,7 @@
 use Behat\Gherkin\Node\TableNode;
 
 /**
- * Trait FeatureContext, houses all of the custom context for the feature files.
+ * Class FeatureContext, houses all of the custom context for the feature files.
  * Author: Mitchel van Hamburg <vanhamburg@redkiwi.nl>, Redkiwi
  */
 trait FeatureContext
