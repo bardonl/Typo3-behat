@@ -150,7 +150,7 @@ JS;
     }
     
     /**
-     * @Then /^I choose different stops$/
+     * @Then /^I choose different stops and download the folder$/
      */
     public function chooseStops()
     {
