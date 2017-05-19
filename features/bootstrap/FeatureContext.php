@@ -1,15 +1,12 @@
 <?php
-use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
-use Behat\MinkExtension\Context\MinkContext;
 
 /**
  * Class FeatureContext, houses all of the custom context for the feature files.
  * Author: Mitchel van Hamburg <vanhamburg@redkiwi.nl>, Redkiwi
  */
-class FeatureContext extends MinkContext implements Context
+trait FeatureContext
 {
-    use HelperContext;
 
     /**
      * The CSS selectors for types and lines from the RET site. Used by the "seeTheLines" function
@@ -52,6 +49,7 @@ class FeatureContext extends MinkContext implements Context
             $i++;
             $this->typeAndLines[$i] = '.line-number--' . strtolower($linesHash['type']) . '-' . $linesHash['lines'];
         }
+        
         $element = $this->getSession()->getPage()->find('css',
             '.line-number--' . strtolower($linesHash['type']) . '-' . $linesHash['lines']);
 
@@ -103,6 +101,7 @@ class FeatureContext extends MinkContext implements Context
      */
     function linesNearMe($lineNumber, $lineType)
     {
+
         //represent nth child of parent div in the dienstregeling id.
         $nthChildType = [
             'bus' => 1,
@@ -196,48 +195,6 @@ class FeatureContext extends MinkContext implements Context
         $this->pressButton('Inloggen');
     }
 
-    /**
-     * @param string $time
-     * @Then /^I check time of lines with time "([^']*)"$/
-     */
-    public function checkTime($time)
-    {
-        $this->timer(1);
-
-        $this->closeCookieBar();
-
-        $indexArray = $this->getIndexes();
-
-        for ($i = 0; $i < count($indexArray); $i++) {
-
-            $linesClasses = $this->typeAndLines[$indexArray[$i]];
-
-            $this->clickOnClassOrId($linesClasses);
-
-            if (!strstr($linesClasses, '-bobbus-')) {
-
-                $this->clickOnClassOrId('.tooltip--ellipsis');
-                $roundTrip = 'terug.html';
-
-            } else {
-                $roundTrip = 'heen.html';
-            }
-
-            $line = $this->getLines($linesClasses);
-
-            if ( is_array($line) && array_key_exists('error' , $line) && $line['error'] === 1) {
-                print($line['message'] . PHP_EOL);
-            } else {
-                $this->visit('/home/reizen/dienstregeling/' . $line . '/' . date('Y-m-d') . 'T' . $time . '%2B02%3A00/' . $roundTrip);
-                print($line . PHP_EOL);
-                print('/home/reizen/dienstregeling/' . $line . '/' . date('Y-m-d') . 'T' . $time . '%2B02%3A00/' . $roundTrip . PHP_EOL);
-            }
-
-            $this->timer(1);
-
-            $this->visit('/');
-        }
-    }
 
     /**
      * @return array
@@ -249,40 +206,6 @@ class FeatureContext extends MinkContext implements Context
         }
 
         return array_values(array_unique($randomNumbers));
-    }
-
-    /**
-     * @param string $linesClass
-     * @return array|string
-     */
-    public function getLines($linesClass)
-    {
-
-        switch ($linesClass) {
-            case strstr($linesClass, '-boat-ferry') === '-boat-ferry':
-
-                return 'fast-ferry';
-
-            case strstr($linesClass, '-bobbus-') === '-bobbus-' . substr(strrchr($linesClass, '-'), 1):
-
-                return 'bob-bus-' . substr(strrchr($linesClass, '-'), 1);
-
-            case strstr($linesClass, '-bus-') === '-bus-' . substr(strrchr($linesClass, '-'), 1):
-
-                return substr(strstr($linesClass, '-bus-'), 1);
-
-            case strstr($linesClass, '-tram-') === '-tram-' . substr(strrchr($linesClass, '-'), 1):
-
-                return substr(strstr($linesClass, '-tram-'), 1);
-
-            default:
-
-                return [
-                    'message' => 'No line selected!',
-                    'error' => 1
-                ];
-
-        }
     }
 
     /**

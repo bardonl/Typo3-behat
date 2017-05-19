@@ -1,5 +1,4 @@
 <?php
-use Behat\Gherkin\Node\TableNode;
 
 /**
  * Class HelperContext this is for all the 'supportive' functions to keep FeatureContext neat and tidy.
@@ -28,7 +27,7 @@ trait HelperContext
                 );
                 break;
         }
-
+        
         if ($element === null) {
             throw new \InvalidArgumentException(sprintf('Cannot find class or id with %s', $selector));
         } else {
