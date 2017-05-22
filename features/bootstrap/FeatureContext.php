@@ -160,7 +160,7 @@ trait FeatureContext
                 'tx_retjourneyplanner_form[search][arrival][uid]' => $arrivals[$journeyIndex],
                 'tx_retjourneyplanner_form[search][requestType]' => mt_rand(0, 1),
                 'tx_retjourneyplanner_form[search][date]' => date('y-m-d'),
-                'tx_retjourneyplanner_form[search][time]' => ($time[$journeyIndex] === 'now') ? date('Hm') : $time[$journeyIndex],
+                'tx_retjourneyplanner_form[search][time]' => ($time[$journeyIndex] === 'now') ? date('H:m') : $time[$journeyIndex],
                 'tx_retjourneyplanner_form[search][travelOption]' => mt_rand(1, 3),
             ]);
 
