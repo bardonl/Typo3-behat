@@ -48,12 +48,12 @@ Feature: Homepage
 
   Scenario: Can I use the journey planner
     Given the following journeys exist:
-      |     departure    |      via       |     arrival   |
-      | rotterdam/veenoord |  s-gravendeel/biekurf |  rotterdam/pieter-de-hoochweg  |
-      | rotterdam/spankerstraat |  n-a |  rotterdam/pieter-de-hoochweg  |
-      | rotterdam/pieter-de-hoochweg |  heenvliet/leenmanstraat|  rotterdam/pieter-de-hoochweg  |
-      | rotterdam/veenoord |  n-a |  rotterdam/pieter-de-hoochweg  |
-      | rotterdam/spankerstraat |  heinenoord/jan-van-vlietstraat |  rotterdam/pieter-de-hoochweg  |
+      | departure                    | via                            | arrival                      | time |
+      | rotterdam/veenoord           | s-gravendeel/biekurf           | rotterdam/pieter-de-hoochweg | 1200  |
+      | rotterdam/spankerstraat      | n-a                            | rotterdam/pieter-de-hoochweg | now  |
+      | rotterdam/pieter-de-hoochweg | heenvliet/leenmanstraat        | rotterdam/pieter-de-hoochweg | now  |
+      | rotterdam/veenoord           | n-a                            | rotterdam/pieter-de-hoochweg | now  |
+      | rotterdam/spankerstraat      | heinenoord/jan-van-vlietstraat | rotterdam/pieter-de-hoochweg | now  |
 
   Scenario: Can I use the travel product assistent
     Then I follow "Reisproductadviseur"
@@ -86,3 +86,4 @@ Feature: Homepage
     Then I should be on the homepage
     Then I follow "Over de RET"
     Then the response status code should be 200
+    

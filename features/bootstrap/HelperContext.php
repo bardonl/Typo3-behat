@@ -1,15 +1,13 @@
 <?php
-use Behat\Gherkin\Node\TableNode;
-
 /**
- * Class HelperContext this is for all the 'supportive' functions to keep FeatureContext neat and tidy.
+ * Trait HelperContext this is for all the 'supportive' functions to keep FeatureContext neat and tidy.
  * @package HelperContext
  */
 trait HelperContext
 {
     /** Clicks on an ID or Class.
-     * @param string $selector , the id or class name.
-     * @When /^I click on the (?:class|id) "([^']*)"$/
+     * @param string $selector the id or class name.
+     * @When /^I click on the (?:class|id|xp) "([^']*)"$/
      **/
     public function clickOnClassOrId($selector)
     {
@@ -21,6 +19,9 @@ trait HelperContext
                 break;
             case '.':
                 $element = $this->getSession()->getPage()->find('css', $selector);
+                break;
+            case '/':
+                $element = $this->getSession()->getPage()->find('xpath', $selector);
                 break;
             default:
                 throw new \InvalidArgumentException(

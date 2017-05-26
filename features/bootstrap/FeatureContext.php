@@ -1,16 +1,12 @@
 <?php
-use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
-use Behat\MinkExtension\Context\MinkContext;
 
 /**
- * Class FeatureContext, houses all of the custom context for the feature files.
+ * Trait FeatureContext, houses all of the custom context for the feature files.
  * Author: Mitchel van Hamburg <vanhamburg@redkiwi.nl>, Redkiwi
  */
-class FeatureContext extends MinkContext implements Context
+trait FeatureContext
 {
-    use HelperContext;
-
     /**
      * The CSS selectors for types and lines from the RET site. Used by the "seeTheLines" function
      * @var array
@@ -19,18 +15,16 @@ class FeatureContext extends MinkContext implements Context
 
     /** Waits for a suggestionbox to appear under an input field.
      * @param string $locator
-     * @param boolean $clickOnFirstSuggestion
-     * @Then /^I wait for the suggestion box with "([^']*)" to appear$/
+     * @param string $clickOnFirstSuggestion
+     * @Then /^I wait for the suggestions at locator "([^']*)" to appear and I "([^']*)" click on the first suggestion$/
      **/
-    public function suggestionBoxTimer($locator, $clickOnFirstSuggestion = false)
+    public function suggestionBoxTimer($locator, $clickOnFirstSuggestion = 'dont')
     {
-        $this->getSession()->wait(5000, '$(\'' . $locator . '\').children().length > 2');
-        if ($clickOnFirstSuggestion === true) {
-            $firstChild = $this->getSession()->getPage()->find('css', $locator . ':first-child');
-            if ($firstChild) {
-                $this->getSession()->getPage()->clickLink($firstChild);
-            } else {
-                print('Couldn\'t find the first child of locator: ' . $locator);
+        if ($this->getSession()->wait(5000, '$(\'' . $locator . '\').children().length > 0')) {
+            if ($clickOnFirstSuggestion === 'do') {
+                $firstSuggestion = $this->getSession()->getPage()->find('css',
+                    $locator .' > span:nth-child(1)');
+                $firstSuggestion->click();
             }
         }
     }
@@ -52,6 +46,7 @@ class FeatureContext extends MinkContext implements Context
         }
         $element = $this->getSession()->getPage()->find('css',
             '.line-number--' . strtolower($linesHash['type']) . '-' . $linesHash['lines']);
+
 
         if ($element === null) {
             throw new \InvalidArgumentException(sprintf('Cannot find line %s of type %s', $linesHash['lines'],
@@ -154,6 +149,7 @@ class FeatureContext extends MinkContext implements Context
             $departures[$i] = $depAndArrHash['departure'];
             $via[$i] = $depAndArrHash['via'];
             $arrivals[$i] = $depAndArrHash['arrival'];
+            $time[$i] = $depAndArrHash['time'];
             $i++;
         }
 
@@ -164,7 +160,7 @@ class FeatureContext extends MinkContext implements Context
                 'tx_retjourneyplanner_form[search][arrival][uid]' => $arrivals[$journeyIndex],
                 'tx_retjourneyplanner_form[search][requestType]' => mt_rand(0, 1),
                 'tx_retjourneyplanner_form[search][date]' => date('y-m-d'),
-                'tx_retjourneyplanner_form[search][time]' => date('H:m'),
+                'tx_retjourneyplanner_form[search][time]' => ($time[$journeyIndex] === 'now') ? date('H:m') : $time[$journeyIndex],
                 'tx_retjourneyplanner_form[search][travelOption]' => mt_rand(1, 3),
             ]);
 
