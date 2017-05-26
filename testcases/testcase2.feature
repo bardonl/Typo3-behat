@@ -6,7 +6,6 @@ Feature: Testcase 2
   Background:
     Given I am on the homepage
 
-
   Scenario: Then I test the journey planner non-GUI
     Given the following journeys exist:
       | departure                | via                  | arrival                      | time |
