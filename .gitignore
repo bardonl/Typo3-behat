@@ -4,3 +4,4 @@ screenshots/
 .phpintel/
 .idea
 streetnames_ret.txt
+/vendor

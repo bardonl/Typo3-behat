@@ -3,6 +3,16 @@ default:
     Behat\MinkExtension:
       base_url: 'https://www.ret.nl/'
       browser_name: chrome
-      goutte: ~
+      goutte:
+        guzzle_parameters:
+          verify: false
       selenium2:
         wd_host: 'http://127.0.0.1:4444/wd/hub'
+  suites:
+    testcase1:
+      paths: [ %paths.base%/testcases/testcase1.feature ]
+      contexts: [ TestCase1Context ]
+
+#    testcase2:
+#      paths: [ %paths.base%/features/testcases ]
+#      contexts: [ TestCase2Context ]
