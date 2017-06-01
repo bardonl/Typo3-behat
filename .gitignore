@@ -4,5 +4,4 @@ screenshots/
 .phpintel/
 .idea
 streetnames_ret.txt
-vendor/*
-vendor/chromedriver.exe
+/vendor

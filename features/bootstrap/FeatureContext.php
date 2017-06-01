@@ -7,6 +7,8 @@ use Behat\Gherkin\Node\TableNode;
  */
 trait FeatureContext
 {
+    use HelperContext;
+
     /**
      * The CSS selectors for types and lines from the RET site. Used by the "seeTheLines" function
      * @var array
@@ -47,7 +49,6 @@ trait FeatureContext
         $element = $this->getSession()->getPage()->find('css',
             '.line-number--' . strtolower($linesHash['type']) . '-' . $linesHash['lines']);
 
-
         if ($element === null) {
             throw new \InvalidArgumentException(sprintf('Cannot find line %s of type %s', $linesHash['lines'],
                 $linesHash['type']));
@@ -60,16 +61,13 @@ trait FeatureContext
     public function clickOnRandomLines()
     {
         if (!empty($this->typeAndLines)) {
-            for ($j = 0; $j <= count($this->typeAndLines); $j++) {
-                $randomNumbers[] = mt_rand(1, count($this->typeAndLines));
-            }
 
-            $uniqueRandomNumbers = array_unique($randomNumbers);
-            $indexArrayKeysNumerically = array_values($uniqueRandomNumbers);
+            $indexArray = $this->getIndexes();
 
-            for ($i = 0; $i < count($indexArrayKeysNumerically); $i++) {
-                $this->clickOnClassOrId($this->typeAndLines[$indexArrayKeysNumerically[$i]]);
-                print('URL response code: ' . $this->getSession()->getStatusCode() . ', URL of tested line: ' . $this->getSession()->getCurrentUrl() . PHP_EOL);
+            for ($i = 0; $i < count($indexArray); $i++) {
+                $this->clickOnClassOrId($this->typeAndLines[$indexArray[$i]]);
+
+                $this->visit('/');
             }
         } else {
             throw new \InvalidArgumentException('Type and Lines array is empty, did you run. Given the following lines exist: prior?');
@@ -195,4 +193,25 @@ trait FeatureContext
         ]);
         $this->pressButton('Inloggen');
     }
+    
+    /**
+     * @return array
+     */
+    public function getIndexes(){
+
+        for ($j = 0; $j <= count($this->typeAndLines); $j++) {
+            $randomNumbers[] = mt_rand(1, count($this->typeAndLines));
+        }
+
+        return array_values(array_unique($randomNumbers));
+    }
+
+    /**
+     * @return void
+     */
+    public function closeCookieBar()
+    {
+        $this->clickOnClassOrId('.cookie-bar__close');
+    }
+
 }

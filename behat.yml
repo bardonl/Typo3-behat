@@ -3,7 +3,9 @@ default:
     Behat\MinkExtension:
       base_url: 'https://www.ret.nl/'
       browser_name: chrome
-      goutte: ~
+      goutte:
+        guzzle_parameters:
+          verify: false
       selenium2:
         wd_host: 'http://127.0.0.1:4444/wd/hub'
   suites:

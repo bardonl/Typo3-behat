@@ -27,18 +27,11 @@ Feature: Homepage
     Then I follow "geplande omleidingen"
     Then I should see "Omleidingen"
 
+    @test
   Scenario: Can I see and click on some lines
     Given the following lines exist:
       | type   | lines |
       | Bus    | 37    |
-      | Bus    | 70    |
-      | Bus    | 174   |
-      | Bus    | 121   |
-      | Bus    | 713   |
-      | Tram   | 4     |
-      | Tram   | 23    |
-      | Tram   | 7     |
-      | Tram   | 25    |
       | Tram   | 8     |
       | Bobbus | b4    |
       | Bobbus | b2    |
