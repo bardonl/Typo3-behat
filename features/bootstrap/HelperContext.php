@@ -41,12 +41,13 @@ trait HelperContext
     public function takeScreenshotOfPage()
     {
         $screenDir = getcwd() . '/screenshots/';
+    
         print('You can find the screenshot(s) in ' . $screenDir . PHP_EOL);
 
         if (!is_dir($screenDir)) {
             mkdir($screenDir);
         }
-        file_put_contents($screenDir . date('d-m-y') . ' - ' . microtime(true) . '.png',
+        file_put_contents($screenDir . date('d-m-y') . ' - ' . uniqid() . '.png',
             $this->getSession()->getScreenshot());
     }
 

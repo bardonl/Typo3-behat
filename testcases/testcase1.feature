@@ -17,7 +17,9 @@ Feature: Testcase 1
       | Bobbus | b2    |
       | Bobbus | b19   |
       | Boat   | ferry |
-    #Then I check time of lines with time "22:00" and all days of the week
+
+    Then I check time of lines with time "22:00" and check all the days of the week
     Then I click on the class ".line-number--tram-23"
     Then I click on folder
     Then I choose different stops and download the folder
+    Then I check if can print the timetable and is displayed correctly of line "tram-23"
