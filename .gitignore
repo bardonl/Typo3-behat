@@ -5,4 +5,4 @@ screenshots/
 .idea
 streetnames_ret.txt
 vendor/*
-chromedriver.exe
+vendor/chromedriver.exe
